@@ -2,7 +2,7 @@
 
 ShiJin 的个人网站，使用 [Hugo](https://gohugo.io/) 与 [Blowfish](https://blowfish.page/) 主题，发布在 GitHub Pages。
 
-站点地址：https://sj-shijin.github.io/hp-blowfish/
+站点地址：https://shijin.space/
 
 ## 本地预览
 
