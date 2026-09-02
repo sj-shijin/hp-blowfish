@@ -1,0 +1,22 @@
+disabled = false
+locale = "zh-cn"
+label = "简体中文"
+weight = 1
+title = "ShiJin"
+
+[params]
+  displayName = "中文"
+  isoCode = "zh-cn"
+  rtl = false
+  dateFormat = "2006-01-02"
+  description = "ShiJin 的个人网站"
+
+[params.author]
+  name = "ShiJin"
+  email = "sj_shijin@outlook.com"
+  headline = "记录学习、项目与生活"
+  bio = "用 Hugo 和 Blowfish 搭建的个人站点。"
+  links = [
+    { github = "https://github.com/sj-shijin" },
+    { email = "mailto:sj_shijin@outlook.com" },
+  ]
