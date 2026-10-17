@@ -28,10 +28,32 @@ jobs:
         with:
           submodules: false
           fetch-depth: 0
+          persist-credentials: false
 
-      # 私有知识库目前只用于本地预览，公开构建只获取主题。
       - name: Checkout public theme
         run: git submodule update --init --recursive themes/blowfish
+
+      - name: Read pinned knowledge revision
+        id: knowledge
+        run: echo "sha=$(git rev-parse HEAD:knowledge-vault)" >> "$GITHUB_OUTPUT"
+
+      # 密钥仅能读取这一私有仓库；固定到网站记录的版本，不跟随最新分支。
+      - name: Checkout private knowledge vault
+        uses: actions/checkout@v4
+        with:
+          repository: sj-shijin/personal-knowledge-vault
+          ref: ${{ steps.knowledge.outputs.sha }}
+          ssh-key: ${{ secrets.KNOWLEDGE_VAULT_READ_KEY }}
+          persist-credentials: false
+          path: knowledge-vault
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install knowledge exporter
+        run: python -m pip install -r scripts/requirements-knowledge.txt
 
       - name: Setup Pages
         id: pages
@@ -43,13 +65,14 @@ jobs:
           hugo-version: ${{ env.HUGO_VERSION }}
           extended: true
 
-      - name: Build
-        run: hugo --gc --minify
+      - name: Build approved public content
+        run: python scripts/build_site.py --output "$RUNNER_TEMP/site-build"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./public
+          # 仅上传网页成品，不上传完整知识库、导出中间目录或 Git 数据。
+          path: ${{ runner.temp }}/site-build/public
 
   deploy:
     needs: build

@@ -16,6 +16,7 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from export_knowledge import export
 from preview_knowledge import PreviewRequestHandler, build
+from build_site import build as build_production
 
 
 class KnowledgeExportTests(unittest.TestCase):
@@ -173,6 +174,46 @@ private_metadata: PRIVATE_METADATA_SENTINEL
         self.spec['attachments'] = []
         with self.assertRaisesRegex(ValueError, '附件'):
             self.run_export()
+
+    @unittest.skipUnless(shutil.which('hugo'), '需要本地 Hugo 才能验证公开构建')
+    def test_production_build_only_publishes_allowed_notes(self):
+        self.manifest.write_text(json.dumps(self.spec))
+        (self.vault / '.obsidian').mkdir()
+        (self.vault / '.obsidian/private.json').write_text('OBSIDIAN_PRIVATE_SENTINEL')
+        (self.vault / '私人附件.txt').write_text('UNPUBLISHED_ATTACHMENT_SENTINEL')
+        site = Path(__file__).resolve().parents[1]
+        production = self.root / 'production'
+        report = build_production(site, self.vault, self.manifest, production)
+        public = production / 'public'
+        all_text = '\n'.join(p.read_text() for p in public.rglob('*')
+                             if p.is_file() and p.suffix in {'.html', '.md', '.json', '.xml', '.txt'})
+        for marker in ['UNPUBLISHED_BODY_SENTINEL', 'PRIVATE_METADATA_SENTINEL',
+                       'HIDDEN_COMMENT_SENTINEL', 'OBSIDIAN_PRIVATE_SENTINEL',
+                       'UNPUBLISHED_ATTACHMENT_SENTINEL', '本地预览', 'noindex']:
+            self.assertNotIn(marker, all_text)
+        self.assertFalse(report['preview'])
+        self.assertTrue((public / 'robots.txt').is_file())
+        self.assertEqual({p.name for p in (public / 'knowledge/raw').iterdir()}, {'alpha.md', 'beta.md'})
+        self.assertEqual(len(list((public / 'knowledge/attachments').iterdir())), 1)
+        self.assertIn('https://shijin.space/knowledge/alpha/', (public / 'knowledge/alpha/index.html').read_text())
+        build(site, self.vault, self.manifest, self.root / 'preview')
+        for relative in ['knowledge/raw/alpha.md', 'knowledge/raw/beta.md', 'knowledge/index.json']:
+            self.assertEqual((public / relative).read_bytes(), (self.root / 'preview/public' / relative).read_bytes())
+
+    @unittest.skipUnless(shutil.which('hugo'), '需要本地 Hugo 才能验证撤回公开内容')
+    def test_production_rebuild_removes_withdrawn_content(self):
+        self.manifest.write_text(json.dumps(self.spec))
+        site = Path(__file__).resolve().parents[1]
+        output = self.root / 'production'
+        build_production(site, self.vault, self.manifest, output)
+        self.manifest.write_text(json.dumps({'notes': [{'path': '乙.md', 'slug': 'beta'}], 'attachments': []}))
+        build_production(site, self.vault, self.manifest, output)
+        public = output / 'public'
+        self.assertFalse((public / 'knowledge/alpha/index.html').exists())
+        self.assertFalse((public / 'knowledge/raw/alpha.md').exists())
+        self.assertEqual(list((public / 'knowledge/attachments').glob('*')), [])
+        index = json.loads((public / 'knowledge/index.json').read_text())
+        self.assertEqual([note['id'] for note in index['notes']], ['beta'])
 
     def test_external_paths_and_symlinks_are_rejected(self):
         (self.root / 'outside.md').write_text('outside')

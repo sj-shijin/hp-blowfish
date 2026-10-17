@@ -25,7 +25,7 @@ hugo server
 
 ## 知识库本地预览
 
-`knowledge-vault/` 是私有仓库的子模块，固定到一个已提交版本。笔记仍在 Obsidian 的正式知识库中维护；这里仅作为构建输入。常规网站构建和 GitHub Actions 目前只读取公开网站内容，不加载私有子模块。主页和导航栏均有知识库入口；没有导出笔记时，只显示空目录页。
+`knowledge-vault/` 是私有仓库的子模块，固定到一个已提交版本。笔记仍在 Obsidian 的正式知识库中维护；这里仅作为构建输入。GitHub Actions 通过专用只读密钥获取该版本，再按 `knowledge/publish.json` 导出允许公开的笔记和附件。知识库仓库保持私有，网站展示清单选中的内容。普通 `hugo server` 不执行知识库导出；完整预览使用下方脚本。
 
 有私有仓库读取权限的本机先获取子模块：
 
@@ -35,7 +35,7 @@ python3 -m venv .venv
 .venv/bin/python -m pip install -r scripts/requirements-knowledge.txt
 ```
 
-已有安装 PyYAML 的 Python 环境可以直接使用，无须重复安装。将本地预览清单保存在网站仓库之外；格式如下，其中路径相对于知识库根目录，`slug` 决定稳定的网址：
+已有安装 PyYAML 的 Python 环境可以直接使用，无须重复安装。默认本地预览与生产构建共用 `knowledge/publish.json`，当前范围为“格问题与格密码”的 29 篇笔记和 1 张图片。清单格式如下，其中路径相对于知识库根目录，`slug` 决定稳定的网址：
 
 ```json
 {
@@ -55,11 +55,10 @@ python3 -m venv .venv
 ```
 
 ```bash
-.venv/bin/python scripts/preview_knowledge.py \
-  --manifest /absolute/path/to/local-preview.json --serve
+.venv/bin/python scripts/preview_knowledge.py --serve
 ```
 
-打开 `http://127.0.0.1:1314/knowledge/`。服务只监听本机；关闭时按 `Ctrl+C`。每次运行重新生成快照，修改清单或笔记后重新启动。默认读取子模块；需要检查尚未提交的正式笔记时，可加 `--vault /absolute/path/to/obsidian-vault`。所有生成内容、缓存及图片处理结果都放在独立临时目录，不写入正式库或网站的 `content/`、`static/`。
+打开 `http://127.0.0.1:1314/knowledge/`。服务只监听本机；关闭时按 `Ctrl+C`。每次运行重新生成快照，修改清单或笔记后重新启动。默认读取子模块；需要检查尚未提交的正式笔记时，可加 `--vault /absolute/path/to/obsidian-vault`。所有生成内容、缓存及图片处理结果都放在独立临时目录，不写入正式库或网站的 `content/`、`static/`。 需要临时试阅其他范围时，可加 `--manifest /absolute/path/to/local-preview.json`；这不会改变正式发布清单。
 
 当前支持普通 Markdown、公式、图片、Obsidian 双链（含别名、章节链接）和清单内笔记的反向链接。仅复制清单中明确允许且实际引用的附件；指向未选笔记的链接显示为文字。整篇笔记嵌入和块引用暂不支持，遇到时停止导出。
 
@@ -85,9 +84,24 @@ git diff --submodule
 
 检查通过后再将 `knowledge-vault` 的版本变更提交到网站。不要直接在子模块副本编辑笔记，避免出现两个独立维护的来源。
 
-`knowledge/publish.json` 是未来公开发布的候选清单，目前为空，且尚未接入生产构建。正式公开前需要确认笔记和附件范围，再接入仅能读取私有库的构建凭据与导出步骤。本地预览清单和临时输出不能提交或复制到公开网站仓库。
+`knowledge/publish.json` 是正式发布范围的唯一清单。新增笔记不会自动公开，只有清单明确列出的笔记和实际引用的允许附件才会导出。调整公开范围时，修改并提交这份清单；外部临时预览清单不参与生产构建。公开网站仓库只保存清单、程序和私有库版本引用，不保存完整知识库或生成的网页副本。
 
-目前完整跑通的是本地流程：正式知识库提交并推送 → 网站更新子模块版本 → 预览脚本按本地清单导出 → Hugo 构建 → 本机浏览。网站远端现有的流程是推送 `main` 后构建公开网站并部署到 GitHub Pages；知识库的生产导出还没有接入该流程。仅推送私有知识库不会更新子模块引用或触发网站发布。
+自动发布流程：网站推送 `main` 或手动触发工作流 → 获取网站记录的私有库版本 → 按公开清单导出 → Hugo 构建 → 仅将生成的 `public/` 上传到 GitHub Pages。导出结果、缓存和构建报告位于运行器临时目录；完整知识库与 Git 数据不在上传目录内。读取或构建失败时，工作流停止，不部署不完整结果。仅推送私有知识库不会更新网站的子模块引用或触发发布。
+
+首次使用自动发布，需要配置一对专用 SSH 部署密钥：
+
+1. 将公钥添加到 `sj-shijin/personal-knowledge-vault` 的 Deploy keys，保持只读，不勾选写入权限。
+2. 将私钥保存为 `sj-shijin/hp-blowfish` 的 Actions secret：`KNOWLEDGE_VAULT_READ_KEY`。
+
+部署密钥允许构建读取该私有仓库，具体公开内容由清单限制；它不能写入知识库，也不用于其他仓库。私钥不写入 Git，工作流不持久化检出凭据。
+
+本地检查与线上相同的生产构建：
+
+```bash
+.venv/bin/python scripts/build_site.py
+```
+
+命令打印构建目录，只有其中的 `public/` 是发布产物；生产页面使用正式域名，并去掉“本地预览”标记。
 
 导出器的测试全部使用独立临时知识库：
 

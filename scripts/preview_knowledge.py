@@ -7,10 +7,9 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path
-import subprocess
 import tempfile
 
-from export_knowledge import export
+from build_site import build as build_site
 
 
 class PreviewRequestHandler(SimpleHTTPRequestHandler):
@@ -23,43 +22,23 @@ class PreviewRequestHandler(SimpleHTTPRequestHandler):
 
 
 def build(site: Path, vault: Path, manifest: Path, output: Path, *, port: int = 1314) -> dict:
-    output.mkdir(parents=True, exist_ok=True)
-    exported = output / 'export'
-    report = export(vault, manifest, exported, preview=True)
-    config = output / 'preview.toml'
-    config.write_text('\n'.join([
-        'baseURL = ' + json.dumps(f'http://127.0.0.1:{port}/'),
-        'resourceDir = ' + json.dumps(str(output / 'resources')),
-        'enableRobotsTXT = false',
-        '[params]', 'robots = "noindex, nofollow"', 'knowledgePreview = true',
-        '[module]',
-        '[[module.mounts]]', 'source = ' + json.dumps(str(site / 'content')), 'target = "content"',
-        '[[module.mounts]]', 'source = ' + json.dumps(str(exported / 'content')), 'target = "content"',
-        '[[module.mounts]]', 'source = ' + json.dumps(str(site / 'static')), 'target = "static"',
-        '[[module.mounts]]', 'source = ' + json.dumps(str(exported / 'static')), 'target = "static"',
-    ]) + '\n', encoding='utf-8')
-    destination = output / 'public'
-    subprocess.run(['hugo', '--source', str(site), '--config', f'{site}/config/_default/hugo.toml,{config}',
-                    '--destination', str(destination), '--cacheDir', str(output / 'cache'),
-                    '--noBuildLock', '--cleanDestinationDir'], check=True)
-    report.update({'url': f'http://127.0.0.1:{port}/knowledge/', 'output': str(output), 'public': str(destination)})
-    (output / 'preview-report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-    return report
+    return build_site(site, vault, manifest, output, preview=True, port=port)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--site', type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument('--vault', type=Path)
-    parser.add_argument('--manifest', type=Path, required=True)
+    parser.add_argument('--manifest', type=Path)
     parser.add_argument('--output', type=Path)
     parser.add_argument('--port', type=int, default=1314)
     parser.add_argument('--serve', action='store_true')
     args = parser.parse_args()
     site = args.site.resolve()
     vault = (args.vault or site / 'knowledge-vault').resolve()
+    manifest = (args.manifest or site / 'knowledge/publish.json').resolve()
     output = (args.output or Path(tempfile.mkdtemp(prefix='pkw-web-preview-'))).resolve()
-    report = build(site, vault, args.manifest.resolve(), output, port=args.port)
+    report = build(site, vault, manifest, output, port=args.port)
     print(json.dumps(report, ensure_ascii=False), flush=True)
     if args.serve:
         handler = partial(PreviewRequestHandler, directory=report['public'])

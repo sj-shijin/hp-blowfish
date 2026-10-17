@@ -1,4 +1,187 @@
 {
-  "notes": [],
-  "attachments": []
+  "categories": [
+    {
+      "id": "lattices",
+      "title": "格问题与格密码"
+    }
+  ],
+  "notes": [
+    {
+      "path": "格问题与格密码/00 概览与阅读路线.md",
+      "slug": "lattices-overview",
+      "category": "lattices",
+      "group": "概览与阅读路线"
+    },
+    {
+      "path": "格问题与格密码/基础知识/01 格与格基.md",
+      "slug": "lattices-and-bases",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/02 基本区域、格行列式与正交化.md",
+      "slug": "fundamental-region-and-orthogonalization",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/03 逐次极小值与 Minkowski 定理.md",
+      "slug": "successive-minima-and-minkowski",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/04 基本计算格问题：SVP、CVP 与 SIVP.md",
+      "slug": "svp-cvp-and-sivp",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/05 格基约化与 LLL 算法.md",
+      "slug": "lattice-reduction-and-lll",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/06 Babai 最近平面算法与近似 CVP.md",
+      "slug": "babai-nearest-plane",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/07 对偶格与对偶基.md",
+      "slug": "dual-lattices",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/08 覆盖半径与转移定理.md",
+      "slug": "covering-radius-and-transference",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/09 高斯函数与离散高斯分布.md",
+      "slug": "gaussian-functions-and-discrete-gaussians",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/10 傅里叶变换与 Poisson 求和公式.md",
+      "slug": "fourier-transform-and-poisson-summation",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/11 平滑参数与格上的高斯质量.md",
+      "slug": "smoothing-parameter-and-gaussian-mass",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/12 q 元格与模线性方程.md",
+      "slug": "q-ary-lattices",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/13 SIS 问题与短整数关系.md",
+      "slug": "sis-and-short-integer-relations",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/14 LWE 问题与带噪线性方程.md",
+      "slug": "lwe-and-noisy-linear-equations",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/15 高斯启发式与随机球面模型.md",
+      "slug": "gaussian-heuristic-and-random-spheres",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/16 投影格、BKZ 与局部 SVP.md",
+      "slug": "projected-lattices-bkz-and-local-svp",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/17 筛法的基本框架与两向量约化.md",
+      "slug": "lattice-sieving-basics",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/18 Nguyen–Vidick、ListSieve 与 GaussSieve.md",
+      "slug": "nguyen-vidick-listsieve-and-gausssieve",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/19 筛法中的近邻搜索与分桶.md",
+      "slug": "nearest-neighbor-search-and-bucketing",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/20 角度 LSH 与多表搜索.md",
+      "slug": "angular-lsh-and-multiple-tables",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/21 球面 LSF 与过滤器.md",
+      "slug": "spherical-lsf-and-filters",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/22 BGJ 递归分桶与多层筛选.md",
+      "slug": "bgj-recursive-bucketing",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/23 多层分桶的参数选择与优化.md",
+      "slug": "multilevel-bucketing-optimization",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/24 重复配对、去重与有效覆盖.md",
+      "slug": "duplicate-pairs-and-effective-coverage",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/25 渐进筛法与向量池复用.md",
+      "slug": "progressive-sieving-and-vector-pool-reuse",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/26 G6K 与 Pump.md",
+      "slug": "g6k-and-pump",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/基础知识/27 筛法的并行化与平台成本模型.md",
+      "slug": "parallel-lattice-sieving-and-platform-costs",
+      "category": "lattices",
+      "group": "基础知识"
+    },
+    {
+      "path": "格问题与格密码/研究增量/28 BGJ 筛法的流式访存组织.md",
+      "slug": "bgj-streaming-memory-organization",
+      "category": "lattices",
+      "group": "研究增量"
+    }
+  ],
+  "attachments": [
+    "格问题与格密码/附件/02-gram-schmidt.png"
+  ]
 }
