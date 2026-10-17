@@ -1,0 +1,9 @@
+knowledge:
+  title: "知识库"
+  preview: "本地预览"
+  empty: "暂无公开笔记。"
+  markdown: "Markdown 版本"
+  breadcrumbs: "知识库导航"
+  groups: "内容分组"
+  note_count:
+    other: "{{ .Count }} 篇笔记"

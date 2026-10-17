@@ -1,0 +1,12 @@
+{{ with . }}
+  <ul class="mt-6 space-y-4">
+    {{ range . }}
+      <li class="border-b border-neutral-200 dark:border-neutral-700 pb-4">
+        <a class="font-semibold" href="{{ .RelPermalink }}">{{ .Title }}</a>
+        <p class="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+          <a href="{{ .Params.rawURL }}">{{ i18n "knowledge.markdown" }}</a>
+        </p>
+      </li>
+    {{ end }}
+  </ul>
+{{ end }}

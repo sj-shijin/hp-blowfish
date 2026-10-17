@@ -2,3 +2,7 @@
 /resources/_gen/
 /.hugo_build.lock
 .DS_Store
+
+# 本地 Python 环境与缓存
+.venv/
+__pycache__/

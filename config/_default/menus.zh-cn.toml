@@ -1,7 +1,8 @@
 [[main]]
-  name = "文章"
-  pageRef = "posts"
-  weight = 10
+  identifier = "knowledge"
+  name = "知识库"
+  pageRef = "knowledge"
+  weight = 5
 
 [[main]]
   name = "关于"
@@ -11,10 +12,5 @@
 [[main]]
   identifier = "github"
   pre = "github"
-  url = "https://github.com/sj-shijin"
-  weight = 30
-
-[[footer]]
-  name = "GitHub"
   url = "https://github.com/sj-shijin/hp-blowfish"
-  weight = 10
+  weight = 30

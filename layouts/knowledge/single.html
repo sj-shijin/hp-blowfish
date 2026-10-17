@@ -1,0 +1,35 @@
+{{ define "main" }}
+  <article class="knowledge-note">
+    <nav class="mb-6 text-sm" aria-label="{{ i18n "knowledge.breadcrumbs" }}">
+      <a href="{{ "/knowledge/" | relLangURL }}">{{ i18n "knowledge.title" }}</a>
+      {{ if .Params.knowledgecategory }}
+        <span aria-hidden="true"> / </span>
+        <a href="{{ .Parent.RelPermalink }}">{{ .Parent.Title }}</a>
+        {{ with .Params.knowledgegroup }}
+          <span aria-hidden="true"> / </span>
+          <a href="{{ $.Parent.RelPermalink }}#{{ . | anchorize }}">{{ . }}</a>
+        {{ end }}
+      {{ end }}
+    </nav>
+    {{ if .Params.privatePreview }}
+      <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ i18n "knowledge.preview" }}</p>
+    {{ end }}
+    <header class="mb-8 max-w-prose">
+      <h1 class="text-4xl font-extrabold text-neutral-900 dark:text-neutral">{{ .Title }}</h1>
+      <p class="mt-4 text-sm"><a href="{{ .Params.rawURL }}">{{ i18n "knowledge.markdown" }}</a></p>
+    </header>
+    <section class="flex flex-col max-w-full mt-0 prose dark:prose-invert lg:flex-row">
+      {{ if and site.Params.article.showTableOfContents (in .TableOfContents "<ul") }}
+        {{ $topClass := cond (or (hasPrefix site.Params.header.layout "fixed") (eq site.Params.header.layout "floating")) "lg:top-[140px]" "lg:top-10" }}
+        <div class="order-first lg:ms-auto px-0 lg:order-last lg:ps-8 lg:max-w-2xs">
+          <div class="toc ps-5 print:hidden lg:sticky {{ $topClass }}">
+            {{ partial "toc.html" . }}
+          </div>
+        </div>
+      {{ end }}
+      <div class="min-w-0 min-h-0 max-w-fit">
+        <div class="article-content max-w-prose mb-20">{{ .Content }}</div>
+      </div>
+    </section>
+  </article>
+{{ end }}

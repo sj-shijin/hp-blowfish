@@ -2,3 +2,6 @@
 	path = themes/blowfish
 	url = https://github.com/nunocoracao/blowfish.git
 	branch = main
+[submodule "knowledge-vault"]
+	path = knowledge-vault
+	url = git@github.com:sj-shijin/personal-knowledge-vault.git

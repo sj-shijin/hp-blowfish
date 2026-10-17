@@ -1,0 +1,6 @@
+{{- /* 保留公式中的 <、>、&，交给主题已有的 KaTeX 渲染。 */ -}}
+{{- if eq .Type "block" -}}
+  <div class="math-block">\[{{ .Inner | htmlEscape | safeHTML }}\]</div>
+{{- else -}}
+  \({{ .Inner | htmlEscape | safeHTML }}\)
+{{- end -}}

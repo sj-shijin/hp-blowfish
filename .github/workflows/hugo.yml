@@ -26,8 +26,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
           fetch-depth: 0
+
+      # 私有知识库目前只用于本地预览，公开构建只获取主题。
+      - name: Checkout public theme
+        run: git submodule update --init --recursive themes/blowfish
 
       - name: Setup Pages
         id: pages
